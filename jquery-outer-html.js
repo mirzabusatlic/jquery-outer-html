@@ -2,10 +2,21 @@
  * jQuery plugin for generating the outer html of an element.
  * The outer html can be indented with tabs appropriately, if specified.
  * 
+ * @requires innerxhtml
+ *
  * @author Mirza Busatlic
  * @url http://github.com/mirzabusatlic/jquery-outer-html
  */
 (function($) {
+	
+	/**
+	 * List of self-closing tags.
+	 */
+	var selfClosingTags = [
+		"area", "base", "br", "col", "command", "embed", 
+		"hr", "img", "input", "keygen", "link", "meta", 
+		"param", "source", "track", "wbr"
+	];
 	
 	$.fn.outerHtml = function(options) {
 		
@@ -21,7 +32,17 @@
 		if(settings.indent) {
 			return indentChildren($this);
 		} else {
-			return this[0].outerHTML;
+			// Wrap with fake wrapper so calling the innerhtml will return the whole block.
+			var $fakeWrapper = $("<fake>");
+			$fakeWrapper.append($this);
+			// Get the inner xhtml.
+			var code = innerXHTML($fakeWrapper.get(0));
+			// Remove self-closing tags.
+			$.each(selfClosingTags, function(index, tag) {
+				code = code.replace("</" + tag + ">", ""); 
+			});
+			// Return the code.
+			return code;
 		}
 	};
 	
