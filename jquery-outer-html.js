@@ -39,7 +39,8 @@
 			var code = innerXHTML($fakeWrapper.get(0));
 			// Remove self-closing tags.
 			$.each(selfClosingTags, function(index, tag) {
-				code = code.replace("</" + tag + ">", ""); 
+				var pattern = "</" + tag + ">";
+				code = code.replace(new RegExp(pattern, "g"), "");
 			});
 			// Return the code.
 			return code;
